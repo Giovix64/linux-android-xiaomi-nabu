@@ -41,5 +41,7 @@ struct xiaomi_keyboard_data {
 	int is_usb_exist;
 	bool keyboard_is_enable;
 	bool is_in_suspend;
+	bool connected;
+	bool user_enabled;
 };
 #endif
