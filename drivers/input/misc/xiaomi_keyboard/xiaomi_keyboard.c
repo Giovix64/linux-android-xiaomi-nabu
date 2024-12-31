@@ -598,6 +598,10 @@ static int xiaomi_keyboard_probe(struct platform_device *pdev)
 		MI_KB_ERR("register power_supply_notifier failed. ret=%d\n", ret);
 		goto err_register_power_supply_notif_failed;
 	}
+	
+	// Enable the keyboard by default
+	set_keyboard_status(1);
+	xiaomi_keyboard_reset();
 
 	MI_KB_INFO("Success\n");
 	return ret;
