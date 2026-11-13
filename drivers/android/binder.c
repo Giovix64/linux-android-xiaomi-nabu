@@ -3242,7 +3242,17 @@ static void binder_transaction(struct binder_proc *proc,
 
 		security_task_getsecid(proc->tsk, &secid);
 		ret = security_secid_to_secctx(secid, &secctx, &secctx_sz);
-		if (ret) {
+		if (ret == -EOPNOTSUPP) {
+			/*
+			 * Halium/Ubuntu Touch: the active LSM (AppArmor on 4.14)
+			 * doesn't implement secid_to_secctx. Deliver the
+			 * transaction without a security context instead of
+			 * failing every call to (vnd)servicemanager.
+			 */
+			secctx = NULL;
+			secctx_sz = 0;
+			ret = 0;
+		} else if (ret) {
 			return_error = BR_FAILED_REPLY;
 			return_error_param = ret;
 			return_error_line = __LINE__;
