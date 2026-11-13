@@ -1715,27 +1715,19 @@ static __latent_entropy struct task_struct *copy_process(
 	}
 
 	if (clone_flags & CLONE_PIDFD) {
-		int reserved;
-
 		/*
 		 * - CLONE_PARENT_SETTID is useless for pidfds and also
 		 *   parent_tidptr is used to return pidfds.
 		 * - CLONE_DETACHED is blocked so that we can potentially
 		 *   reuse it later for CLONE_PIDFD.
 		 * - CLONE_THREAD is blocked until someone really needs it.
+		 *
+		 * Like upstream since v5.3, don't require *parent_tidptr == 0:
+		 * Qt's forkfd initialises it to -1, got -EINVAL and then ended up
+		 * calling kill(-1, SIGKILL), killing the whole user session.
 		 */
 		if (clone_flags &
 		    (CLONE_DETACHED | CLONE_PARENT_SETTID | CLONE_THREAD))
-			return ERR_PTR(-EINVAL);
-
-		/*
-		 * Verify that parent_tidptr is sane so we can potentially
-		 * reuse it later.
-		 */
-		if (get_user(reserved, parent_tidptr))
-			return ERR_PTR(-EFAULT);
-
-		if (reserved != 0)
 			return ERR_PTR(-EINVAL);
 	}
 
