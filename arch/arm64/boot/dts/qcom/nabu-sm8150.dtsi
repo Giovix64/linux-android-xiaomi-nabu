@@ -1194,7 +1194,12 @@ And public attribution of xiaomi platforms(like J20S and so and)
 		};
 		hall_key1 {
 			label = "hall_key1";
-			gpios = <&tlmm 83 GPIO_ACTIVE_LOW>;
+			/*
+			 * Ubuntu Touch: sensore della tastiera Xiaomi (SW_TABLET_MODE).
+			 * Polarita' invertita rispetto ad Android: Linux/Maliit si aspettano
+			 * SW_TABLET_MODE=1 SENZA tastiera (altrimenti nascondono la tastiera a schermo).
+			 */
+			gpios = <&tlmm 83 GPIO_ACTIVE_HIGH>;
 			linux,input-type = <5>;
 			linux,code = <1>;
 			gpio-key,wakeup;
